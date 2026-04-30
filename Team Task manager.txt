@@ -1,0 +1,5 @@
+Backend: Java, Spring Boot, Spring Data JPA, Spring Security
+
+Frontend: React.js, Axios, Bootstrap
+
+Database: MySQL
