@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = "http://localhost:8080/api";
+const API_URL = "https://team-task-manager-fullstack-2.onrender.com/api";
 
 class ApiService {
 
