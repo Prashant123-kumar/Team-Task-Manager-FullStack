@@ -2,7 +2,9 @@ package in.sp.main.controllers;
 
 import in.sp.main.models.User;
 import in.sp.main.repositories.UserRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -16,20 +18,24 @@ public class AuthController {
     private UserRepository userRepository;
 
     @PostMapping("/signup")
-    public String signup(@RequestBody User user) {
+    public ResponseEntity<String> signup(@Valid @RequestBody User user) {
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-            return "Error: Email already exists!";
+            return ResponseEntity.badRequest().body("Error: Email already exists!");
+        }
+        if (user.getRole() == null || user.getRole().isBlank()) {
+            user.setRole("MEMBER"); // default role
         }
         userRepository.save(user);
-        return "User registered successfully!";
+        return ResponseEntity.ok("User registered successfully!");
     }
 
     @PostMapping("/login")
-    public Object login(@RequestBody User loginRequest) {
+    public ResponseEntity<?> login(@RequestBody User loginRequest) {
         Optional<User> user = userRepository.findByEmail(loginRequest.getEmail());
-        if (user.isPresent() && user.get().getPassword().equals(loginRequest.getPassword())) {
-            return user.get(); // Frontend ko user details (role ke saath) bhej rahe hain
+        if (user.isPresent()
+                && user.get().getPassword().equals(loginRequest.getPassword())) {
+            return ResponseEntity.ok(user.get());
         }
-        return "Invalid email or password!";
+        return ResponseEntity.status(401).body("Invalid email or password!");
     }
 }
